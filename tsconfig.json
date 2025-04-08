@@ -1,0 +1,31 @@
+{
+    "compilerOptions": {
+        "types": ["node", "bun"],
+        "noImplicitAny": true,
+        "module": "ESNext",
+        "target": "ESNext",
+		"rootDir": ".",
+        "baseUrl": "src",
+		"outDir": "./dist",
+        "noEmit": true,
+        "declaration": true,
+        "skipLibCheck": true,
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "allowImportingTsExtensions": true,
+
+        "paths": {
+            "@utils/*": ["utils/*"],
+            "@types/*": ["types/*"],
+            "@classes/*": ["classes/*"],
+            "@events/*": ["events/*"],
+            "@src/*": ["*"],
+        }
+    },
+
+    "include": ["src", "test"],
+	"exclude": ["node_modules", "dist"]
+}
