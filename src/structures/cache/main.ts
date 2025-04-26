@@ -1,6 +1,12 @@
+import Client from "@structures/client/main";
+
 export default class Cache<K, V> extends Map<string, V> {
-    constructor() {
+    public readonly client: Client;
+    
+    constructor(client: Client) {
         super();
+
+        this.client = client;
     }
 
     resolve(key: string): any {

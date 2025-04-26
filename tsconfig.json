@@ -20,7 +20,7 @@
         "paths": {
             "@utils/*": ["utils/*"],
             "@types/*": ["types/*"],
-            "@classes/*": ["classes/*"],
+            "@structures/*": ["structures/*"],
             "@events/*": ["events/*"],
             "@src/*": ["*"],
         }

@@ -1,7 +1,8 @@
 import { APIGuild } from "discord-api-types/v10";
-import { GuildData } from "types/guild";
+import Client from "@structures/client/main";
+import Base from "@structures/base";
 
-export default class Guild implements GuildData {
+export default class Guild extends Base {
     public id: string;
     public name: string;
     public icon: string | null;
@@ -10,7 +11,10 @@ export default class Guild implements GuildData {
     public features: string[];
     public mfaLevel: number;
 
-    constructor(data: APIGuild) {
+    constructor(client: Client, data?: APIGuild) {
+        super(client);
+
+        if (!data) return;
         this.id = data.id;
         this.name = data.name;
         this.icon = data.icon;

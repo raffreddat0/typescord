@@ -1,5 +1,5 @@
+import { GatewayIntentBits } from "discord-api-types/v10";
 
-import { GatewayIntentBits } from "discord-api-types/v10"
 export default class Intents {
     static FLAGS = GatewayIntentBits;
     private bytes: bigint;

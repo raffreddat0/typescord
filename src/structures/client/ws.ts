@@ -2,16 +2,15 @@ import WebSocketClient from "ws";
 import { camelize } from "@utils/string"; 
 import Client from "./main";
 
-const cache = new Map<string, any>();
 export default class WebSocket extends WebSocketClient {
     private readonly token: string;
     public intents: bigint;
     public client: Client;
     
-    constructor(client: Client) {
+    constructor(client: Client, token: string) {
         super("wss://gateway.discord.gg/?v=10&encoding=json");
+        this.token = token;
         this.intents = client.intents;
-        this.token = client.token;
         this.client = client;
         this.open();
     }
@@ -35,6 +34,7 @@ export default class WebSocket extends WebSocketClient {
         });
 
         this.on("close", (code, reason) => {
+            if (code === 1000) return;
             console.error(`WebSocket chiuso. Codice: ${code}, Motivo: ${reason}`);
         });
         
@@ -47,7 +47,8 @@ export default class WebSocket extends WebSocketClient {
         this.client.emit("raw", payload);
 
         if (t === "READY") {
-            this.client.name = d.user.username;
+            this.client.id = d.user.id;
+            this.client.user = new (this.client.instances["user"])(this.client, d.user);
             cached = d.guilds.length;
             if (cached === 0) {
                 this.client.ready = true;
@@ -82,7 +83,7 @@ export default class WebSocket extends WebSocketClient {
         });
     }
     
-    heartbeat(s: any, heartbeat: number) {
+    private heartbeat(s: any, heartbeat: number) {
         this.send(JSON.stringify({ op: 1, d: s }));
         setTimeout(() => {
             this.heartbeat(s, heartbeat);
