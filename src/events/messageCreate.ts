@@ -4,6 +4,6 @@ import { Message } from "@src/main";
 
 export default function messageCreate(client: Client, data: APIMessage) {
     const message = new Message(client, data);
-    console.log(message);
+
     client.emit("messageCreate", message);
 }

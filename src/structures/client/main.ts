@@ -5,6 +5,7 @@ import User from "@structures/user";
 import Guild from "@structures/guild";
 import Intents from "./intents";
 import WebSocket from "./ws";
+import Rest from "./rest";
 
 export default class Client extends EventEmitter {
     public intents: bigint;
@@ -14,8 +15,9 @@ export default class Client extends EventEmitter {
     };
     public ready: boolean = false;
     public id: string;
-    public user: User = new User(this);
-    public guilds: Guilds = new Guilds(this);
+    public user = new User(this);
+    public guilds = new Guilds(this);
+    public rest: Rest;
     protected token: string;
     #ws: WebSocket;
 
@@ -35,12 +37,13 @@ export default class Client extends EventEmitter {
         }
 
         if (this.token)
-            this.#ws = new WebSocket(this, this.token);
+            this.login(this.token);
     }
 
     login(token: string): void {
         this.token = token;
         this.#ws = new WebSocket(this, this.token);
+        this.rest = new Rest({ token: this.token });
     }
 
     destroy(): void {

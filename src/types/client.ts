@@ -1,6 +1,6 @@
 import { GatewayIntentBits } from "discord-api-types/v10";
 
-export type ClientOptions = {
+export interface ClientOptions {
     intents: number | (keyof typeof GatewayIntentBits)[];
     instances?: any[];
     token?: string;

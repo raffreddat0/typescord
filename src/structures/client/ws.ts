@@ -48,7 +48,7 @@ export default class WebSocket extends WebSocketClient {
 
         if (t === "READY") {
             this.client.id = d.user.id;
-            this.client.user = new (this.client.instances["user"])(this.client, d.user);
+            this.client.user = new this.client.instances["user"](this.client, d.user);
             cached = d.guilds.length;
             if (cached === 0) {
                 this.client.ready = true;
