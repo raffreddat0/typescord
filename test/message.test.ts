@@ -8,7 +8,7 @@ const client = new Client({
 
 test("message", async () => {
     const message = await waitForMessage(client);
-    
+
     expect(message).toBeInstanceOf(Message);
     expect(message.id).toBeString();
 

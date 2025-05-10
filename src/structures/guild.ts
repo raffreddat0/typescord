@@ -1,5 +1,5 @@
-import { APIGuild } from "discord-api-types/v10";
-import Client from "@structures/client/main";
+import type { APIGuild } from "discord-api-types/v10";
+import { Client, Members } from "@src/main";
 import Base from "@structures/base";
 
 export default class Guild extends Base {
@@ -10,6 +10,7 @@ export default class Guild extends Base {
     public discoverySplash: string | null;
     public features: string[];
     public mfaLevel: number;
+    public members: Members;
 
     constructor(client: Client, data?: APIGuild) {
         super(client);
@@ -22,5 +23,9 @@ export default class Guild extends Base {
         this.discoverySplash = data.discovery_splash;
         this.features = data.features;
         this.mfaLevel = data.mfa_level;
+        this.members = new Members(this.client, this.id);
+
+        if (client.options.cache.members)
+            this.members.fetch();
     }
 }

@@ -5,6 +5,6 @@ import Guild from "@structures/guild";
 export default function guildCreate(client: Client, data: APIGuild) {
     const guild = new Guild(client, data);
     client.guilds.set(guild.id, guild);
-    
+
     client.emit("guildCreate", guild);
 }

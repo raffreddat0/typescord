@@ -1,40 +1,43 @@
-import { EventEmitter } from 'events';
-import { ClientOptions } from "types/client";
-import Guilds from "@structures/cache/guilds";
-import User from "@structures/user";
-import Guild from "@structures/guild";
-import Intents from "./intents";
+import { GatewayIntentBits } from "discord-api-types/v10";
+import type { ClientOptions } from "types/client";
+import { EventEmitter } from "events";
+import { Users, Guilds, User, Flags } from "@src/main";
 import WebSocket from "./ws";
 import Rest from "./rest";
 
 export default class Client extends EventEmitter {
-    public intents: bigint;
-    public instances = {
-        "user": User,
-        "guild": Guild
-    };
+    public intents: Flags;
     public ready: boolean = false;
     public id: string;
-    public user = new User(this);
-    public guilds = new Guilds(this);
+    public user: User;
+    public users: Users;
+    public guilds: Guilds;
     public rest: Rest;
+    public options: Omit<ClientOptions, "intents" | "token">;
     protected token: string;
-    #ws: WebSocket;
+    private ws: WebSocket;
 
     constructor(options: ClientOptions) {
         super();
 
-        this.intents = Intents.resolve(options.intents);
-        this.token = options.token || process.env.TOKEN;
+        const { intents, token, ...rest } = options;
 
-        for (const instance of (options.instances || [])) {
-            const result = Object.entries(this.instances).find(([key, value]) => instance.prototype instanceof value);
-            if (result) {
-                if (result[0] === "user")
-                    this.user = new instance({} as any);
-                this.instances[result[0] as keyof typeof this.instances] = instance;
-            }
-        }
+        this.intents = new Flags(intents, GatewayIntentBits);
+        this.token = token || process.env.TOKEN;
+
+        this.options = rest;
+        this.options.cache = {
+            users: rest.cache?.users ?? true,
+            guilds: rest.cache?.guilds ?? true,
+            members: rest.cache?.members ?? true,
+        };
+
+        this.user = new User(this);
+        this.users = new Users(this);
+        this.guilds = new Guilds(this);
+
+        if (this.options.cache.users)
+            this.users.fetch();
 
         if (this.token)
             this.login(this.token);
@@ -42,12 +45,11 @@ export default class Client extends EventEmitter {
 
     login(token: string): void {
         this.token = token;
-        this.#ws = new WebSocket(this, this.token);
+        this.ws = new WebSocket(this, this.token);
         this.rest = new Rest({ token: this.token });
     }
 
     destroy(): void {
-        this.#ws.close();
+        this.ws.close();
     }
-
 }

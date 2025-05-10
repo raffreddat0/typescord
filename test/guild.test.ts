@@ -8,7 +8,7 @@ const client = new Client({
 
 test("guilds", async () => {
     await waitForReady(client);
-    
+
     expect(client.guilds).toBeInstanceOf(Map);
     expect(client.guilds.size).toBeGreaterThan(0);
 });

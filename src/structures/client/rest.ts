@@ -1,72 +1,52 @@
-import undici from "undici";
-import { RestOptions } from "types/rest";
+import axios, { AxiosInstance, Axios } from "axios";
+import type { RestOptions } from "types/rest";
 
 export default class Rest {
-  protected readonly path: string;
-  #token: string;
+    private readonly path: string;
+    private readonly cdn: string;
+    private api: AxiosInstance;
 
-  constructor(options: RestOptions) {
-    this.path = options.path || "https://discord.com/api/v10";
-    this.#token = options.token;
-  }
+    constructor(options: RestOptions) {
+        this.path = options.path || "https://discord.com/";
+        this.cdn = options.cdn || "https://cdn.discordapp.com";
 
-  public async get(url: string) {
-    const result = await undici.request(this.path + url, {
-      method: "GET",
-      headers: {
-        Authorization: `Bot ${this.#token}`,
-        "content-type": "application/json",
-      },
-    });
-    return await result.body.json();
-  }
+        this.api = axios.create({
+            baseURL: this.path + "api/v10",
+            headers: {
+                Authorization: `Bot ${options.token}`,
+                "content-type": "application/json",
+            },
+        });
 
-  public async post(url: string, body: object) {
-    const result = await undici.request(this.path + url, {
-      method: "POST",
-      headers: {
-        Authorization: `Bot ${this.#token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    return await result.body.json();
-  }
+    }
 
-  public async patch(url: string, body: object) {
-    const result = await undici.request(this.path + url, {
-      method: "PATCH",
-      headers: {
-        Authorization: `Bot ${this.#token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    return await result.body.json();
-  }
+    public async get(url: string) {
+        const result = await this.api.get(url);
+        return result.data;
+    }
 
-  public async put(url: string, body: object) {
-    const result = await undici.request(this.path + url, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bot ${this.#token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    return await result.body.json();
-  }
+    public async post(url: string, body: object) {
+        const result = await this.api.post(url, body);
+        return result.data;
+    }
 
-  public async delete(url: string, body: object) {
-    const result = await undici.request(this.path + url, {
-      method: "PUT",
-      headers: {
-        Authorization: `Bot ${this.#token}`,
-        "content-type": "application/json",
-      },
-      body: JSON.stringify(body),
-    });
-    return await result.body.json();
-  }
+    public async patch(url: string, body: object) {
+        const result = await this.api.patch(url, body);
+        return result.data;
+    }
+
+    public async put(url: string, body: object) {
+        const result = await this.api.put(url, body);
+        return result.data;
+    }
+
+    public async delete(url: string, body: object) {
+        const result = await this.api.delete(url, { data: body });
+        return result.data;
+    }
+
+    url(url: string, cdn: boolean = false) {
+        return cdn ? `${this.cdn}${url}` : `${this.path}${url}`;
+    }
 }
 export { Rest };

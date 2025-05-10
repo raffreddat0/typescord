@@ -19,10 +19,10 @@
 
         "paths": {
             "@utils/*": ["utils/*"],
-            "@types/*": ["types/*"],
             "@structures/*": ["structures/*"],
             "@events/*": ["events/*"],
             "@src/*": ["*"],
+            "types/*": ["types/*"],
         }
     },
 

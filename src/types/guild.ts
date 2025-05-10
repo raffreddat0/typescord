@@ -1,4 +1,4 @@
-import { Snowflake } from "discord-api-types/globals";
-import Guild from "@structures/guild";
+import type { Snowflake } from "discord-api-types/globals";
+import type { Guild } from "@src/main";
 
-export type GuildResolvable = Snowflake | Guild;
+export type GuildResolvable = Snowflake | InstanceType<typeof Guild>;

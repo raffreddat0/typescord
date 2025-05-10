@@ -1,12 +1,12 @@
 import type { Snowflake } from "discord-api-types/globals";
-import type { GuildResolvable } from "./guild";
+import type { UserResolvable } from "./user";
 
-export interface FetchGuildOptions {
-    guild: GuildResolvable;
+export interface FetchUserOptions {
+    user: UserResolvable;
     withCounts?: boolean;
 }
 
-export interface FetchGuildsOptions {
+export interface FetchUsersOptions {
     before?: Snowflake;
     after?: Snowflake;
     limit?: number;

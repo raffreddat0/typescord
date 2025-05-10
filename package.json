@@ -2,20 +2,24 @@
   "name": "typescord",
   "version": "0.0.1",
   "main": "src/main.ts",
+  "type": "module",
   "author": "raffreddat0",
-  "license": "MIT",
+  "license": "Apache-2.0",
   "dependencies": {
     "@types/ws": "^8.5.3",
-    "discord-api-types": "^0.37.119",
+    "axios": "^1.9.0",
     "undici": "^5.10.0",
     "ws": "^8.9.0"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.25.1",
     "@types/bun": "^1.2.8",
     "@types/node": "^22.13.14",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "eslint": "^9.25.1",
+    "globals": "^16.0.0",
     "typescript": "^5.8.3"
   }
 }
