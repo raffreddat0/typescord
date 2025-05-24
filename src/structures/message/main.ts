@@ -26,26 +26,6 @@ export default class Message extends Base {
         this.components = data.components ?? null;
     }
 
-    reply(...options: any[]): void {
-        const data: any = {};
-        if (typeof options[0] === "string")
-            data["content"] = options[0];
-        else if (typeof options[0] === "object") {
-            data["content"] = options[0].content || null;
-            data["embeds"] = options[0].embeds || null;
-            data["components"] = options[0].components || null;
-        }
-
-        if (options[1])
-            if (typeof options[1] === "object")
-                data["components"] = options[1] || null;
-            else if (typeof options[1] === "boolean")
-                data["ephemeral"] = options[1];
-
-        if (options[2] && typeof options[1] === "boolean")
-            data["ephemeral"] = options[2];
-    }
-
     toJSON(): any {
         return {
             id: this.id,

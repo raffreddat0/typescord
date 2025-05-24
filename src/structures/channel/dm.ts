@@ -1,6 +1,7 @@
 import { APIDMChannel, ChannelFlags } from "discord-api-types/v10";
 import { Client, Flags, Base, User } from "@src/main";
 import { getTimestamp } from "@utils/string";
+import { patchMessage } from "@utils/object";
 
 export default class DMChannel extends Base {
     public id: string;
@@ -32,7 +33,22 @@ export default class DMChannel extends Base {
         return this.client.rest.url(`/channels/@me/${this.id}`);
     }
 
+    public async send(...options: (string | any)[]) {
+        return this.client.rest.post(`/channels/${this.id}/messages`, {
+            body: patchMessage(options)
+        });
+    }
+
     public toString() {
         return `<@${this.userId}}>`;
+    }
+
+    public toJSON() {
+        return {
+            id: this.id,
+            type: this.type,
+            flags: Number(this.flags.bitfield),
+            recipients: [this.user.toJSON()],
+        };
     }
 }

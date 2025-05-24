@@ -1,7 +1,7 @@
-import { APIButtonComponentWithCustomId, APIButtonComponentWithURL } from "discord-api-types/v10";
+import { APIButtonComponentWithCustomId, APIButtonComponentWithURL, ComponentType } from "discord-api-types/v10";
+import { BaseComponent } from "@src/main";
 
-export default class Button {
-    public type: number;
+export default class Button extends BaseComponent<ComponentType.Button> {
     public customId: string | undefined;
     public disabled: boolean;
     public label: string | null;
@@ -10,7 +10,8 @@ export default class Button {
     public emoji: any | null;
 
     constructor(data?: APIButtonComponentWithCustomId | APIButtonComponentWithURL) {
-        this.type = data?.type ?? 0;
+        super(data);
+
         this.customId = (data as APIButtonComponentWithCustomId)?.custom_id ?? undefined;
         this.disabled = data?.disabled ?? false;
         this.label = data?.label ?? null;
@@ -19,32 +20,32 @@ export default class Button {
         this.emoji = data?.emoji ?? null;
     }
 
-    setLabel(label: string): this {
+    setLabel(label: string) {
         this.label = label;
         return this;
     }
 
-    setStyle(style: number): this {
+    setStyle(style: number) {
         this.style = style;
         return this;
     }
 
-    setDisabled(disabled: boolean): this {
+    setDisabled(disabled: boolean) {
         this.disabled = disabled;
         return this;
     }
 
-    setEmoji(emoji: any): this {
+    setEmoji(emoji: any) {
         this.emoji = emoji;
         return this;
     }
 
-    setUrl(url: string): this {
+    setUrl(url: string) {
         this.url = url;
         return this;
     }
 
-    setCustomId(customId: string): this {
+    setCustomId(customId: string) {
         this.customId = customId;
         return this;
     }

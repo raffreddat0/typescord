@@ -71,7 +71,7 @@ export default class Members extends Cache<Member> {
         return super.resolve(resolvable);
     }
 
-    fix(data: APIGuildMember | APIGuildMember[]) {
+    fix(data: Member | APIGuildMember | APIGuildMember[]) {
         if (Array.isArray(data))
             for (const member of data)
                 this.fix(member);

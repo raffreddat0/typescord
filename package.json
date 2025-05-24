@@ -6,8 +6,11 @@
   "author": "raffreddat0",
   "license": "Apache-2.0",
   "dependencies": {
+    "@types/lodash": "^4.17.17",
     "@types/ws": "^8.5.3",
     "axios": "^1.9.0",
+    "discord-api-types": "^0.38.8",
+    "lodash": "^4.17.21",
     "undici": "^5.10.0",
     "ws": "^8.9.0"
   },

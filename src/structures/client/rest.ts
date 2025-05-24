@@ -40,8 +40,8 @@ export default class Rest {
         return result.data;
     }
 
-    public async delete(url: string, body: object) {
-        const result = await this.api.delete(url, { data: body });
+    public async delete(url: string, body?: object) {
+        const result = await this.api.delete(url, body ? { data: body } : undefined);
         return result.data;
     }
 

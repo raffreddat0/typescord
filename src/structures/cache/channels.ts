@@ -1,66 +1,62 @@
-import type { APIUser } from "discord-api-types/v10";
-import type { UserResolvable } from "types/user";
-import type { FetchUsersOptions, FetchUserOptions } from "types/users";
+import type { APIChannel } from "discord-api-types/v10";
+import type { ChannelResolvable } from "types/channel";
 import { Routes } from "discord-api-types/v10";
-import { Client, DMChannel } from "@src/main";
+import { Client, BaseChannel } from "@src/main";
 import Cache from "./main";
 
-export default class Channels extends Cache<DMChannel> {
-    constructor(client: Client) {
+export default class Channels<T extends BaseChannel<any>> extends Cache<T> {
+    private guildId: string;
+
+    constructor(client: Client, guildId?: string) {
         super(client);
+
+        this.guildId = guildId;
     }
 
-    async fetch(ChannelResolvable: UserResolvable): Promise<DMChannel>;
-    async fetch(options: FetchUserOptions): Promise<DMChannel>;
-    async fetch(options?: FetchUsersOptions): Promise<this>;
-    async fetch(options?: UserResolvable | FetchUserOptions | FetchUsersOptions) {
-        let url;
-
-        if (!options)
+    async fetch(resolvable: ChannelResolvable): Promise<T>;
+    async fetch(): Promise<this>;
+    async fetch(resolvable?: ChannelResolvable) {
+        if (!resolvable)
             return this;
 
-        const resolve = this.resolveId(options as UserResolvable);
-        if (resolve) {
-            if (this.has(resolve))
-                return this.get(resolve);
-            url = Routes.user(resolve);
-        } else if (typeof options === "object")
-            if ("user" in options)
-                url = Routes.user(this.resolveId(options.user));
-
-        if (!url)
+        const resolve = this.resolveId(resolvable as ChannelResolvable);
+        if (!resolve)
             throw new Error("Invalid options");
 
-        const data = await this.client.rest.get(url) as APIUser;
-        const user = new User(this.client, data);
-        this.set(user.id, user);
+        if (this.has(resolve))
+            return this.get(resolve);
+        const url = Routes.channel(resolve);
 
-        return user;
+        const data = await this.client.rest.get(url) as APIChannel;
+        const channel = new BaseChannel(this.client, data) as T;
+        this.set(channel.id, channel);
+
+        return channel;
     }
 
-    resolveId(UserResolvable: UserResolvable) {
-        if (UserResolvable instanceof User)
-            return UserResolvable.id;
+    resolveId(resolvable: ChannelResolvable) {
+        if (resolvable instanceof BaseChannel)
+            return resolvable.id;
 
-        return super.resolveId(UserResolvable);
+        return super.resolveId(resolvable);
     }
 
-    resolve(user: UserResolvable) {
-        if (user instanceof User)
-            return user;
+    resolve(channel: ChannelResolvable) {
+        if (channel instanceof BaseChannel)
+            return channel as T;
 
-        return super.resolve(user);
+        return super.resolve(channel);
     }
 
-    fix(data: APIUser | APIUser[]) {
+    fix(data: T | APIChannel | APIChannel[]) {
         if (Array.isArray(data))
             for (const user of data)
                 this.fix(user);
 
-        else if (!(data instanceof User)) {
-            const fixed = new User(this.client, data);
+        else if (!(data instanceof BaseChannel)) {
+            const fixed = new BaseChannel(this.client, data) as T;
             this.set(data.id, fixed);
         } else
-            this.set(data.id, data);
+            this.set(data.id, data as T);
     }
 }

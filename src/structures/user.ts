@@ -1,4 +1,5 @@
 import { APIUser, Snowflake, UserPremiumType, UserFlags } from "discord-api-types/v10";
+import isEqual from "lodash/isEqual";
 import type { AvatarDecoration } from "types/user";
 import { Base, Client, Flags } from "@src/main";
 import { getTimestamp } from "@utils/string";
@@ -72,6 +73,10 @@ export default class User extends Base {
         return this.client.rest.url(`/embed/avatars/${index}.png`, true);
     }
 
+    get dmChannel() {
+        return this.client.users.dmChannel(this.id);
+    }
+
     public avatarURL(options: {
         size?: number,
         extension?: string
@@ -104,6 +109,18 @@ export default class User extends Base {
             options.extension = this.avatar.startsWith("a_") ? ".gif" : ".png";
 
         return this.banner && this.client.rest.url(`/banners/${this.id}/${this.banner}${options.extension}?size=${options.size || 1024}`, true);
+    }
+
+    public createDM() {
+        return this.client.users.createDM(this.id);
+    }
+
+    public deleteDM() {
+        return this.client.users.deleteDM(this.id);
+    }
+
+    public equals(user: User) {
+        return isEqual(this, user);
     }
 
     public toString(): string {
