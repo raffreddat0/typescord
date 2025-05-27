@@ -5,6 +5,7 @@ import { Routes } from "discord-api-types/v10";
 import { Client, Member } from "@src/main";
 import Cache from "./main";
 
+type APIMember = APIGuildMember & { guild_id: string };
 export default class Members extends Cache<Member> {
     private guildId: string;
 
@@ -18,7 +19,7 @@ export default class Members extends Cache<Member> {
     async fetch(options: FetchMemberOptions): Promise<Member>;
     async fetch(options?: FetchMembersOptions): Promise<this>;
     async fetch(options?: MemberResolvable | FetchMemberOptions | FetchMembersOptions) {
-        let url, multiple = false;
+        let url;
 
         if (!options)
             url = Routes.guildMembers(this.guildId);
@@ -37,21 +38,19 @@ export default class Members extends Cache<Member> {
                         url += `?after=${options.after}`;
                     if ("limit" in options)
                         url += `?limit=${options.limit}`;
-                    multiple = true;
                 }
         }
 
         if (!url)
             throw new Error("Invalid options");
 
-        const data = await this.client.rest.get(url) as APIGuildMember | APIGuildMember[];
-
-        if (multiple) {
+        const data = await this.client.rest.get(url) as APIMember | APIMember[];
+        if (Array.isArray(data)) {
             this.fix(data);
             return this;
         }
 
-        const member = new Member(this.client, data as APIGuildMember);
+        const member = new Member(this.client, { ...data, guild_id: this.guildId });
         this.set(member.id, member);
 
         return member;
@@ -77,7 +76,7 @@ export default class Members extends Cache<Member> {
                 this.fix(member);
 
         else if (!(data instanceof Member)) {
-            const fixed = new Member(this.client, data);
+            const fixed = new Member(this.client, { ...data, guild_id: this.guildId });
             this.set(data.user.id, fixed);
         } else
             this.set(data.id, data);
