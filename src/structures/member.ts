@@ -14,7 +14,7 @@ export default class Member extends Base {
     public user: User;
     public guild: Guild;
 
-    constructor(client: Client, data?: APIGuildMember & { guild_id: string }) {
+    constructor(client: Client, guild: Guild, data?: APIGuildMember) {
         super(client);
 
         if (!data) return;
@@ -26,9 +26,9 @@ export default class Member extends Base {
         this.deaf = data.deaf;
         this.mute = data.mute;
         this.pending = data.pending;
-        this.guildId = data.guild_id;
+        this.guildId = guild.id;
         this.user = new User(this.client, data.user);
-        this.guild = this.client.guilds.get(data.guild_id);
+        this.guild = guild;
     }
 
     get joinedAt() {
@@ -39,6 +39,8 @@ export default class Member extends Base {
         size?: number,
         extension?: string
     } = {}) {
+        if (!this.avatar)
+            return null;
         if (!options.extension)
             options.extension = this.avatar.startsWith("a_") ? ".gif" : ".png";
 
@@ -56,6 +58,8 @@ export default class Member extends Base {
         size?: number,
         extension?: string
     } = {}) {
+        if (!this.banner)
+            return null;
         if (!options.extension)
             options.extension = this.avatar.startsWith("a_") ? ".gif" : ".png";
 
@@ -67,5 +71,18 @@ export default class Member extends Base {
         extension?: string
     } = {}) {
         return this.bannerURL(options) ?? this.user.bannerURL(options);
+    }
+
+    public toJSON(): Omit<APIGuildMember, "roles" | "flags"> {
+        return {
+            nick: this.nickname,
+            avatar: this.avatar,
+            banner: this.banner,
+            joined_at: this.joinedAt.toISOString(),
+            deaf: this.deaf,
+            mute: this.mute,
+            pending: this.pending,
+            user: this.user.toJSON()
+        };
     }
 }

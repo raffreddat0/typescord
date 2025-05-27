@@ -45,13 +45,15 @@ export default class Client extends EventEmitter {
             this.login(this.token);
     }
 
-    login(token: string): void {
+    public login(token: string) {
         this.token = token;
         this.ws = new WebSocket(this, this.token);
         this.rest = new Rest({ token: this.token });
+        if (this.options.cache.members)
+            this.guilds.forEach((guild) => guild.members.fetch());
     }
 
-    destroy(): void {
+    public destroy() {
         this.ws.close();
     }
 }

@@ -1,7 +1,7 @@
 import { APIDMChannel, ChannelFlags } from "discord-api-types/v10";
 import { Client, Flags, Base, User } from "@src/main";
 import { getTimestamp } from "@utils/string";
-import { patchMessage } from "@utils/object";
+import { patchMessage } from "@utils/functions";
 
 export default class DMChannel extends Base {
     public id: string;

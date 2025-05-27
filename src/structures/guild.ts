@@ -23,9 +23,22 @@ export default class Guild extends Base {
         this.discoverySplash = data.discovery_splash;
         this.features = data.features;
         this.mfaLevel = data.mfa_level;
-        this.members = new Members(this.client, this.id);
+        this.members = new Members(this.client, this);
 
-        if (client.options.cache.members)
+        if (client.ready && client.options.cache.members)
             this.members.fetch();
+    }
+
+    public toJSON() {
+        return {
+            id: this.id,
+            name: this.name,
+            icon: this.icon,
+            splash: this.splash,
+            discoverySplash: this.discoverySplash,
+            features: this.features,
+            mfaLevel: this.mfaLevel,
+            members: this.members.toArray()
+        };
     }
 }

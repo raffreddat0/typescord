@@ -1,3 +1,5 @@
+import { inspect } from "util";
+
 type FlagResolvable = string | string[] | number | bigint;
 export default class Flags {
     public readonly flags: any;
@@ -5,32 +7,15 @@ export default class Flags {
     private freezed: boolean;
 
     constructor(flags: string[] | number | bigint, enumarator: any) {
+        this.flags = enumarator || {};
+        Object.freeze(this.flags);
+
         this.bit = this.resolve(flags);
         this.freezed = false;
-
-        this.flags = enumarator || this.flags || {};
-        Object.freeze(this.flags);
     }
 
-    private resolve(flags: FlagResolvable): bigint {
-        let result = 0n;
-        if (typeof flags === "bigint" || typeof flags === "number") return BigInt(flags);
-        if (typeof flags === "string")
-            return BigInt(this.flags[flags]);
-
-        if (Array.isArray(flags))
-            for (const flag of flags)
-                if (typeof flag === "string" && Object.prototype.hasOwnProperty.call(this.flags, flag))
-                    result |= BigInt(this.flags[flag]);
-                else if (typeof flag === "number" || typeof flag === "bigint")
-                    result |= BigInt(flag);
-                else
-                    throw new Error("Invalid flag");
-
-        else
-            throw new Error("Invalid flag");
-
-        return result;
+    get bitfield(): bigint {
+        return this.bit;
     }
 
     public add(intents: FlagResolvable): void {
@@ -56,7 +41,28 @@ export default class Flags {
         this.freezed = true;
     }
 
-    get bitfield(): bigint {
-        return this.bit;
+    private resolve(flags: FlagResolvable): bigint {
+        let result = 0n;
+        if (typeof flags === "bigint" || typeof flags === "number") return BigInt(flags);
+        if (typeof flags === "string")
+            return BigInt(this.flags[flags]);
+
+        if (Array.isArray(flags))
+            for (const flag of flags)
+                if (typeof flag === "string" && Object.hasOwn(this.flags, flag))
+                    result |= BigInt(this.flags[flag]);
+                else if (typeof flag === "number" || typeof flag === "bigint")
+                    result |= BigInt(flag);
+                else
+                    throw new Error("Invalid flag");
+
+        else
+            throw new Error("Invalid flag");
+
+        return result;
+    }
+
+    [inspect.custom](depth: number, options: any) {
+        return options.stylize(`[Flags ${this.bit}]`, "special");
     }
 }

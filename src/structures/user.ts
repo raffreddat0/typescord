@@ -81,6 +81,8 @@ export default class User extends Base {
         size?: number,
         extension?: string
     } = {}) {
+        if (!this.avatar)
+            return null;
         if (!options.extension)
             options.extension = this.avatar.startsWith("a_") ? ".gif" : ".png";
 
@@ -105,8 +107,10 @@ export default class User extends Base {
         size?: number,
         extension?: string
     } = {}) {
+        if (!this.banner)
+            return null;
         if (!options.extension)
-            options.extension = this.avatar.startsWith("a_") ? ".gif" : ".png";
+            options.extension = this.banner.startsWith("a_") ? ".gif" : ".png";
 
         return this.banner && this.client.rest.url(`/banners/${this.id}/${this.banner}${options.extension}?size=${options.size || 1024}`, true);
     }

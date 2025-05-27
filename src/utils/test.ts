@@ -7,7 +7,6 @@ export function waitForReady(client: Client): Promise<void> {
             resolve();
         else
             client.once("ready", () => resolve());
-
     });
 }
 

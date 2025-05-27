@@ -9,6 +9,9 @@ export default class Guilds extends Cache<Guild> {
 
     constructor(client: Client) {
         super(client);
+
+        if (this.client.options.cache.guilds)
+            this.load();
     }
 
     async fetch(resolvable: GuildResolvable): Promise<Guild>;
@@ -72,7 +75,10 @@ export default class Guilds extends Cache<Guild> {
         return super.resolve(resolvable);
     }
 
-    fix(data: Guild | APIGuild | APIGuild[]) {
+    fix(data: Guild | Guild[] | APIGuild | APIGuild[]) {
+        if (!data)
+            return;
+
         if (Array.isArray(data))
             for (const guild of data)
                 this.fix(guild);
@@ -82,5 +88,11 @@ export default class Guilds extends Cache<Guild> {
             this.set(data.id, fixed);
         } else
             this.set(data.id, data);
+
+    }
+
+    load() {
+        const data = super.read();
+        this.fix(data);
     }
 }
