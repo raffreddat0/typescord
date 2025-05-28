@@ -1,4 +1,6 @@
 import type { GatewayIntentBits } from "discord-api-types/v10";
+import type { EnumResolvable } from "types/enum";
+import { Intents } from "@src/main";
 
 export interface CacheOptions {
     guilds?: boolean;
@@ -11,7 +13,7 @@ export interface CacheOptions {
 }
 
 export interface ClientOptions {
-    intents: number | (keyof typeof GatewayIntentBits)[];
+    intents: Intents | EnumResolvable<typeof GatewayIntentBits>;
     token?: string;
     cache?: CacheOptions;
 };

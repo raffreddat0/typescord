@@ -18,7 +18,7 @@ export default class User extends Base {
     public locale?: string;
     public verified?: boolean;
     public email?: string | null;
-    public flags?: Flags;
+    public flags?: Flags<typeof UserFlags>;
     public premiumType?: UserPremiumType;
     public avatarDecoration?: AvatarDecoration | null;
 

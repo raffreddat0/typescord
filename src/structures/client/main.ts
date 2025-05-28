@@ -1,12 +1,12 @@
 import { GatewayIntentBits } from "discord-api-types/v10";
 import type { ClientOptions } from "types/client";
 import { EventEmitter } from "events";
-import { Users, Guilds, User, Channels, DMChannel, Flags } from "@src/main";
+import { Users, Guilds, User, Channels, DMChannel, Intents } from "@src/main";
 import WebSocket from "./ws";
 import Rest from "./rest";
 
 export default class Client extends EventEmitter {
-    public intents: Flags;
+    public intents: Intents;
     public ready: boolean = false;
     public id: string;
     public user: User;
@@ -23,9 +23,12 @@ export default class Client extends EventEmitter {
 
         const { intents, token, ...rest } = options;
 
-        this.intents = new Flags(intents, GatewayIntentBits);
-        this.token = token || process.env.TOKEN;
+        if (intents instanceof Intents)
+            this.intents = intents;
+        else
+            this.intents = new Intents(intents);
 
+        this.token = token || process.env.TOKEN;
         this.options = rest;
         this.options.cache = {
             users: rest.cache?.users ?? true,

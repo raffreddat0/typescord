@@ -1,5 +1,7 @@
 import Base from "@structures/base";
-import Flags from "@structures/flags";
+import Enum from "@structures/enum/main";
+import Intents from "@structures/enum/intents";
+import Flags from "@structures/enum/flags";
 import Cache from "@structures/cache/main";
 import Client from "@structures/client/main";
 import User from "@structures/user";
@@ -20,7 +22,9 @@ import Channels from "@structures/cache/channels";
 
 export {
     Base,
+    Enum,
     Flags,
+    Intents,
     Cache,
     Client,
     User,

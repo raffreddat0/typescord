@@ -1,17 +1,18 @@
-import type { APIGuildMember } from "discord-api-types/v10";
-import { Client, User, Guild, Base } from "@src/main";
+import { APIGuildMember, GuildMemberFlags } from "discord-api-types/v10";
+import { Base, Client, User, Guild, Flags } from "@src/main";
 
 export default class Member extends Base {
     public id: string;
-    public nickname: string;
-    public avatar: string;
-    public banner: string;
+    public user: User;
+    public nickname?: string | null;
+    public avatar?: string | null;
+    public banner?: string | null;
     public joinedTimestamp: number;
     public deaf: boolean;
     public mute: boolean;
-    public pending: boolean;
+    public flags: Flags<typeof GuildMemberFlags>;
+    public pending?: boolean;
     public guildId: string;
-    public user: User;
     public guild: Guild;
 
     constructor(client: Client, guild: Guild, data?: APIGuildMember) {
@@ -19,15 +20,16 @@ export default class Member extends Base {
 
         if (!data) return;
         this.id = data.user.id;
-        this.nickname = data.nick;
-        this.avatar = data.avatar;
-        this.banner = data.banner;
+        this.user = new User(this.client, data.user);
+        this.nickname = data.nick ?? null;
+        this.avatar = data.avatar ?? null;
+        this.banner = data.banner ?? null;
         this.joinedTimestamp = new Date(data.joined_at).getTime();
         this.deaf = data.deaf;
         this.mute = data.mute;
+        this.flags = new Flags(data.flags, GuildMemberFlags);
         this.pending = data.pending;
         this.guildId = guild.id;
-        this.user = new User(this.client, data.user);
         this.guild = guild;
     }
 
@@ -73,16 +75,17 @@ export default class Member extends Base {
         return this.bannerURL(options) ?? this.user.bannerURL(options);
     }
 
-    public toJSON(): Omit<APIGuildMember, "roles" | "flags"> {
+    public toJSON(): Omit<APIGuildMember, "roles"> {
         return {
+            user: this.user.toJSON(),
             nick: this.nickname,
             avatar: this.avatar,
             banner: this.banner,
             joined_at: this.joinedAt.toISOString(),
             deaf: this.deaf,
             mute: this.mute,
-            pending: this.pending,
-            user: this.user.toJSON()
+            flags: Number(this.flags.bitfield),
+            pending: this.pending
         };
     }
 }

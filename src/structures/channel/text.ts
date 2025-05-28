@@ -10,9 +10,9 @@ export default class TextChannel extends Base {
     public topic?: string;
     public position?: number;
     public guildId?: string;
-    public rateLimitPerUser?: number; 
+    public rateLimitPerUser?: number;
     public lastMessageId?: string;
-    public lastPinTimestamp?: string; 
+    public lastPinTimestamp?: string;
     public nsfw?: boolean;
     public defaultAutoArchiveDuration?: number;
     public defaultThreadRateLimitPerUser?: number;
@@ -30,9 +30,9 @@ export default class TextChannel extends Base {
         this.topic = data.topic;
         this.position = data.position;
         this.guildId = data.guild_id;
-        this.rateLimitPerUser = data.rate_limit_per_user; 
+        this.rateLimitPerUser = data.rate_limit_per_user;
         this.lastMessageId = data.last_message_id;
-        this.lastPinTimestamp = data.last_pin_timestamp; 
+        this.lastPinTimestamp = data.last_pin_timestamp;
         this.nsfw = data.nsfw;
         this.defaultAutoArchiveDuration = data.default_auto_archive_duration;
         this.defaultThreadRateLimitPerUser = data.default_thread_rate_limit_per_user;
@@ -71,7 +71,7 @@ export default class TextChannel extends Base {
             topic: this.topic,
             position: this.position,
             guild_id: this.guildId,
-            rate_limit_per_user: this.rateLimitPerUser, 
+            rate_limit_per_user: this.rateLimitPerUser,
             last_message_id: this.lastMessageId,
             last_pin_timestamp: this.lastPinTimestamp,
             nsfw: this.nsfw,
