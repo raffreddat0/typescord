@@ -1,7 +1,4 @@
 import Client from "@structures/client/main";
-import * as fs from "fs";
-import * as path from "path";
-import { encodeJson, decodeJson } from "@utils/object";
 
 export default class Cache<V> extends Map<string, V> {
     public readonly client: Client;
@@ -12,11 +9,11 @@ export default class Cache<V> extends Map<string, V> {
         this.client = client;
     }
 
-    public first(): V | null {
+    public first() {
         return this.toArray()[0] ?? null;
     }
 
-    public last(): V | null {
+    public last() {
         return this.toArray()[this.size - 1] ?? null;
     }
 
@@ -32,10 +29,7 @@ export default class Cache<V> extends Map<string, V> {
 
     public set(key: string, value: V & { unavaiable?: boolean }) {
         if (value?.unavaiable) return this;
-        super.set(key, value);
-        this.write(key);
-
-        return this;
+        return super.set(key, value);
     }
 
     public add(key: string, value: V) {
@@ -43,7 +37,6 @@ export default class Cache<V> extends Map<string, V> {
     }
 
     public delete(key: string) {
-        this.write(key, true);
         return super.delete(key);
     }
 
@@ -77,53 +70,5 @@ export default class Cache<V> extends Map<string, V> {
 
     public toArray() {
         return Array.from(this.values());
-    }
-
-    protected read(suffix?: string) {
-        const cacheRoot = path.resolve(process.cwd(), ".cache");
-        if (!fs.existsSync(cacheRoot))
-            return;
-
-        const subclassName = this.constructor.name.toLocaleLowerCase();
-        const subclassDir = path.join(cacheRoot, subclassName);
-        if (!fs.existsSync(subclassDir))
-            return;
-
-        let files = fs.readdirSync(subclassDir);
-        if (suffix)
-            files = files.filter(file => file.endsWith(`.${suffix}`));
-
-        return files.map(file => {
-            const filePath = path.join(subclassDir, file);
-            const fileContent = fs.readFileSync(filePath, "utf8");
-            const data = decodeJson(fileContent) as any;
-            return data;
-        });
-    }
-
-    protected write(key: string, remove = false) {
-        const cacheRoot = path.resolve(process.cwd(), ".cache");
-        if (!fs.existsSync(cacheRoot))
-            fs.mkdirSync(cacheRoot);
-
-        const subclassName = this.constructor.name.toLocaleLowerCase();
-        const subclassDir = path.join(cacheRoot, subclassName);
-        if (!fs.existsSync(subclassDir))
-            fs.mkdirSync(subclassDir);
-
-        const value = this.get(key);
-        if (!value) return;
-
-        let name = key;
-        if (subclassName === "members")
-            name = `${key}.${(value as V & { guildId: string }).guildId}`;
-
-        const filePath = path.join(subclassDir, name);
-        if (remove) {
-            if (fs.existsSync(filePath))
-                fs.unlinkSync(filePath);
-        } else
-            fs.writeFileSync(filePath, encodeJson((value as V & { toJSON: () => any }).toJSON()));
-
     }
 }

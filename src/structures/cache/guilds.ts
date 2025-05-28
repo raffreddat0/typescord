@@ -9,16 +9,13 @@ export default class Guilds extends Cache<Guild> {
 
     constructor(client: Client) {
         super(client);
-
-        if (this.client.options.cache.guilds)
-            this.load();
     }
 
-    async fetch(resolvable: GuildResolvable): Promise<Guild>;
-    async fetch(options: FetchGuildOptions): Promise<Guild>;
-    async fetch(options?: FetchGuildsOptions): Promise<this>;
-    async fetch(options?: GuildResolvable | FetchGuildOptions | FetchGuildsOptions) {
-        let url, multiple = false;
+    fetch(resolvable: GuildResolvable): Promise<Guild>;
+    fetch(options: FetchGuildOptions): Promise<Guild>;
+    fetch(options?: FetchGuildsOptions): Promise<this>;
+    public async fetch(options?: GuildResolvable | FetchGuildOptions | FetchGuildsOptions) {
+        let url: string;
 
         if (!options)
             url = Routes.userGuilds();
@@ -41,58 +38,54 @@ export default class Guilds extends Cache<Guild> {
                         url += `?after=${options.after}`;
                     if ("limit" in options)
                         url += `?limit=${options.limit}`;
-                    multiple = true;
                 }
         }
 
         if (!url)
             throw new Error("Invalid options");
 
-        const data = await this.client.rest.get(url) as APIGuild | APIGuild[];
+        const data = await this.client.rest.get(url);
 
-        if (multiple) {
-            this.fix(data);
+        if (Array.isArray(data)) {
+            await this.fix(data);
             return this;
         }
 
-        const guild = new Guild(this.client, data as APIGuild);
+        const guild = new Guild(this.client, data);
+        await guild.members.fetch();
         this.set(guild.id, guild);
 
         return guild;
     }
 
-    resolveId(resolvable: GuildResolvable) {
+    public resolveId(resolvable: GuildResolvable) {
         if (resolvable instanceof Guild)
             return resolvable.id;
 
         return super.resolveId(resolvable);
     }
 
-    resolve(resolvable: GuildResolvable) {
+    public resolve(resolvable: GuildResolvable) {
         if (resolvable instanceof Guild)
             return resolvable;
 
         return super.resolve(resolvable);
     }
 
-    fix(data: Guild | Guild[] | APIGuild | APIGuild[]) {
+    public async fix(data: Guild | Guild[] | APIGuild | APIGuild[]) {
         if (!data)
             return;
 
         if (Array.isArray(data))
             for (const guild of data)
-                this.fix(guild);
+                await this.fix(guild);
 
         else if (!(data instanceof Guild)) {
             const fixed = new Guild(this.client, data);
+            if (this.client.options.cache.members)
+                await fixed.members.fetch();
             this.set(data.id, fixed);
         } else
             this.set(data.id, data);
-
-    }
-
-    load() {
-        const data = super.read();
-        this.fix(data);
     }
 }

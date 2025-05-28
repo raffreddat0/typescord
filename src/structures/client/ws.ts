@@ -58,9 +58,10 @@ export default class WebSocket extends WebSocketClient {
             }
 
             if (t === "GUILD_CREATE" && cached > 0) {
-                cached--;
                 if (this.client.options.cache.guilds)
-                    this.client.guilds.fix(d);
+                    await this.client.guilds.fix(d);
+
+                cached--;
 
                 if (cached === 0) {
                     this.client.ready = true;

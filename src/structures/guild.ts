@@ -24,9 +24,6 @@ export default class Guild extends Base {
         this.features = data.features;
         this.mfaLevel = data.mfa_level;
         this.members = new Members(this.client, this);
-
-        if (client.ready && client.options.cache.members)
-            this.members.fetch();
     }
 
     public toJSON() {

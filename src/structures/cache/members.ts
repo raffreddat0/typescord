@@ -12,14 +12,13 @@ export default class Members extends Cache<Member> {
         super(client);
 
         this.guild = guild;
-        this.load();
     }
 
-    async fetch(resolvable: MemberResolvable): Promise<Member>;
-    async fetch(options: FetchMemberOptions): Promise<Member>;
-    async fetch(options?: FetchMembersOptions): Promise<this>;
-    async fetch(options?: MemberResolvable | FetchMemberOptions | FetchMembersOptions) {
-        let url;
+    fetch(resolvable: MemberResolvable): Promise<Member>;
+    fetch(options: FetchMemberOptions): Promise<Member>;
+    fetch(options?: FetchMembersOptions): Promise<this>;
+    public async fetch(options?: MemberResolvable | FetchMemberOptions | FetchMembersOptions) {
+        let url: string;
 
         if (!options)
             url = Routes.guildMembers(this.guild.id);
@@ -44,9 +43,9 @@ export default class Members extends Cache<Member> {
         if (!url)
             throw new Error("Invalid options");
 
-        const data = await this.client.rest.get(url) as APIGuildMember | APIGuildMember[];
+        const data = await this.client.rest.get(url);
         if (Array.isArray(data)) {
-            this.fix(data);
+            await this.fix(data);
             return this;
         }
 
@@ -56,21 +55,21 @@ export default class Members extends Cache<Member> {
         return member;
     }
 
-    resolveId(resolvable: MemberResolvable) {
+    public resolveId(resolvable: MemberResolvable) {
         if (resolvable instanceof Member)
             return resolvable.id;
 
         return super.resolveId(resolvable);
     }
 
-    resolve(resolvable: MemberResolvable) {
+    public resolve(resolvable: MemberResolvable) {
         if (resolvable instanceof Member)
             return resolvable;
 
         return super.resolve(resolvable);
     }
 
-    fix(data: Member | Member[] | APIGuildMember | APIGuildMember[]) {
+    public async fix(data: Member | Member[] | APIGuildMember | APIGuildMember[]) {
         if (!data)
             return;
 
@@ -83,10 +82,5 @@ export default class Members extends Cache<Member> {
             this.set(data.user.id, fixed);
         } else
             this.set(data.id, data);
-    }
-
-    load() {
-        const data = super.read(this.guild.id);
-        return this.fix(data);
     }
 }

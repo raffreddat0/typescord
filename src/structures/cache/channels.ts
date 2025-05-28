@@ -13,45 +13,53 @@ export default class Channels<T extends BaseChannel<any>> extends Cache<T> {
         this.guildId = guildId;
     }
 
-    async fetch(resolvable: ChannelResolvable): Promise<T>;
-    async fetch(): Promise<this>;
-    async fetch(resolvable?: ChannelResolvable) {
+    fetch(resolvable: ChannelResolvable): Promise<T>;
+    fetch(): Promise<this>;
+    public async fetch(resolvable?: ChannelResolvable) {
+        let url: string;
+
         if (!resolvable)
+            url = Routes.guildChannels(this.guildId);
+        else {
+            const resolve = this.resolveId(resolvable as ChannelResolvable);
+            if (!resolve)
+                throw new Error("Invalid options");
+
+            if (this.has(resolve))
+                return this.get(resolve);
+            url = Routes.channel(resolve);
+        }
+
+        const data = await this.client.rest.get(url);
+        if (Array.isArray(data)) {
+            await this.fix(data);
             return this;
+        }
 
-        const resolve = this.resolveId(resolvable as ChannelResolvable);
-        if (!resolve)
-            throw new Error("Invalid options");
-
-        if (this.has(resolve))
-            return this.get(resolve);
-        const url = Routes.channel(resolve);
-
-        const data = await this.client.rest.get(url) as APIChannel;
         const channel = new BaseChannel(this.client, data) as T;
         this.set(channel.id, channel);
 
         return channel;
     }
 
-    resolveId(resolvable: ChannelResolvable) {
+    public resolveId(resolvable: ChannelResolvable) {
         if (resolvable instanceof BaseChannel)
             return resolvable.id;
 
         return super.resolveId(resolvable);
     }
 
-    resolve(channel: ChannelResolvable) {
+    public resolve(channel: ChannelResolvable) {
         if (channel instanceof BaseChannel)
             return channel as T;
 
         return super.resolve(channel);
     }
 
-    fix(data: T | APIChannel | APIChannel[]) {
+    public async fix(data: T | T[] | APIChannel | APIChannel[]) {
         if (Array.isArray(data))
-            for (const user of data)
-                this.fix(user);
+            for (const channel of data)
+                this.fix(channel);
 
         else if (!(data instanceof BaseChannel)) {
             const fixed = new BaseChannel(this.client, data) as T;

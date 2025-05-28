@@ -10,7 +10,7 @@ export default class Users extends Cache<User> {
         super(client);
     }
 
-    dmChannel(resolvable: UserResolvable) {
+    public dmChannel(resolvable: UserResolvable) {
         const id = this.resolveId(resolvable);
         if (!id)
             throw new Error("Invalid UserResolvable");
@@ -18,7 +18,7 @@ export default class Users extends Cache<User> {
         return this.client.channels.find(channel => channel.type === ChannelType.DM && channel.userId === id) ?? null;
     }
 
-    async createDM(resolvable: UserResolvable) {
+    public async createDM(resolvable: UserResolvable) {
         const id = this.resolveId(resolvable);
         if (!id)
             throw new Error("Invalid UserResolvable");
@@ -39,7 +39,7 @@ export default class Users extends Cache<User> {
         return channel;
     }
 
-    async deleteDM(resolvable: UserResolvable) {
+    public async deleteDM(resolvable: UserResolvable) {
         const id = this.resolveId(resolvable);
         if (!id)
             throw new Error("Invalid UserResolvable");
@@ -54,11 +54,11 @@ export default class Users extends Cache<User> {
         return channel;
     }
 
-    async fetch(resolvable: UserResolvable): Promise<User>;
-    async fetch(options: FetchUserOptions): Promise<User>;
-    async fetch(options?: FetchUsersOptions): Promise<this>;
-    async fetch(options?: UserResolvable | FetchUserOptions | FetchUsersOptions) {
-        let url;
+    fetch(resolvable: UserResolvable): Promise<User>;
+    fetch(options: FetchUserOptions): Promise<User>;
+    fetch(options?: FetchUsersOptions): Promise<this>;
+    public async fetch(options?: UserResolvable | FetchUserOptions | FetchUsersOptions) {
+        let url: string;
 
         if (!options)
             return this;
@@ -82,21 +82,21 @@ export default class Users extends Cache<User> {
         return user;
     }
 
-    resolveId(resolvable: UserResolvable) {
+    public resolveId(resolvable: UserResolvable) {
         if (resolvable instanceof User)
             return resolvable.id;
 
         return super.resolveId(resolvable);
     }
 
-    resolve(resolvable: UserResolvable) {
+    public resolve(resolvable: UserResolvable) {
         if (resolvable instanceof User)
             return resolvable;
 
         return super.resolve(resolvable);
     }
 
-    fix(data: User | APIUser | APIUser[]) {
+    public async fix(data: User | APIUser | APIUser[]) {
         if (Array.isArray(data))
             for (const user of data)
                 this.fix(user);
