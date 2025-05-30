@@ -1,7 +1,7 @@
 import { APITextChannel, ChannelFlags } from "discord-api-types/v10";
-import { Client, Flags, Base } from "@src/main";
+import { Client, Flags, Base, Guild, Message } from "@src/main";
 import { getTimestamp } from "@utils/string";
-import { patchMessage } from "@utils/object";
+import { patchMessage } from "@utils/functions";
 
 export default class TextChannel extends Base {
     public id: string;
@@ -51,6 +51,46 @@ export default class TextChannel extends Base {
 
     get url() {
         return this.client.rest.url(`/channels/${this.guildId}/${this.id}`);
+    }
+
+    get deletable(): Boolean {
+        //Whether the channel is deletable by the client user
+        return;
+    }
+
+    get guild(): Guild{
+        return this.client.guilds.get(this.guildId);
+    }
+
+    get lastMessage() {
+        return; // lastMessageId fetcharlo
+    }
+
+    get lastPinAt(): Date{
+        return new Date(this.lastPinTimestamp);
+    }
+
+    get manageable(): Boolean {
+        //Whether the channel is manageable by the client user
+        return;
+    }
+
+    get members(){
+        return //A collection of cached members of this channel, mapped by their ids. Members that can view this channel, if the channel is text-based. Members in the channel, if the channel is voice-based.
+    }
+
+    get messages() {
+        return; //A manager of the messages sent to this channel
+    }
+
+    get parent() {
+        return; //The category parent of this channel
+        //CategoryChannel
+    }
+
+    get viewable(): Boolean {
+        //Whether the channel is viewable by the client user
+        return;
     }
 
     public async send(...options: (string | any)[]) {
