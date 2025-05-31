@@ -1,5 +1,5 @@
 import type { PermissionFlagsBits } from "discord-api-types/v10";
-import type { EnumResolvable } from "types/enum";
+import type { EnumResolvable } from "types/resolvable";
 import { Enum } from "@src/main";
 
 type EnumType = typeof PermissionFlagsBits;

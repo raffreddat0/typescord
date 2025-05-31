@@ -1,9 +1,8 @@
-import type { APIGuildMember } from "discord-api-types/v10";
-import type { MemberResolvable } from "types/member";
-import type { FetchMemberOptions, FetchMembersOptions } from "types/members";
+import type { APIGuildMember, Snowflake } from "discord-api-types/v10";
+import type { MemberResolvable } from "types/resolvable";
+import type { FetchMemberOptions, FetchMembersOptions } from "types/fetch";
 import { Routes } from "discord-api-types/v10";
-import { Client, Member, Guild } from "@src/main";
-import Cache from "./main";
+import { Cache, Client, Member, Guild } from "@src/main";
 
 export default class Members extends Cache<Member> {
     private guild: Guild;
@@ -27,18 +26,35 @@ export default class Members extends Cache<Member> {
             if (resolve) {
                 if (this.has(resolve))
                     return this.get(resolve);
+
                 url = Routes.guildMember(this.guild.id, resolve);
             } else if (typeof options === "object")
-                if ("member" in options) {
-                    url = Routes.guildMember(this.guild.id, this.resolveId(options.member));
+                if ("member" in options || "user" in options) {
+                    let resolve: Snowflake;
+                    if ("member" in options)
+                        resolve = this.resolveId(options.member);
+                    if ("user" in options)
+                        resolve = this.client.users.resolveId(options.user);
                     if ("caching" in options && options.caching === false)
                         caching = false;
-                } else if ("after" in options || "limit" in options) {
-                    url = Routes.guildMembers(this.guild.id);
-                    if ("after" in options)
-                        url += `?after=${options.after}`;
+
+                    url = Routes.guildMember(this.guild.id, resolve);
+                } else if ("query" in options || "limit" in options || "withPresence" in options || "time" in options || "nonce" in options) {
+                    const params = [];
+                    if ("query" in options)
+                        params.push(`query=${options.query}`);
                     if ("limit" in options)
-                        url += `?limit=${options.limit}`;
+                        params.push(`limit=${options.limit}`);
+                    if ("withPresence" in options)
+                        params.push(`with_presence=${options.withPresence}`);
+                    if ("time" in options)
+                        params.push(`time=${options.time}`);
+                    if ("nonce" in options)
+                        params.push(`nonce=${options.nonce}`);
+
+                    url = Routes.guildMembers(this.guild.id);
+                    if (params.length > 0)
+                        url += `?${params.join("&")}`;
                 }
         }
 

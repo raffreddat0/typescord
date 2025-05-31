@@ -1,9 +1,8 @@
 import { APIUser, ChannelType } from "discord-api-types/v10";
-import type { UserResolvable } from "types/user";
-import type { FetchUsersOptions, FetchUserOptions } from "types/users";
+import type { UserResolvable } from "types/resolvable";
+import type { FetchUserOptions } from "types/fetch";
 import { Routes } from "discord-api-types/v10";
-import { Client, User, DMChannel } from "@src/main";
-import Cache from "./main";
+import { Cache, Client, User, DMChannel } from "@src/main";
 
 export default class Users extends Cache<User> {
     constructor(client: Client) {
@@ -56,8 +55,8 @@ export default class Users extends Cache<User> {
 
     fetch(resolvable: UserResolvable): Promise<User>;
     fetch(options: FetchUserOptions): Promise<User>;
-    fetch(options?: FetchUsersOptions): Promise<this>;
-    public async fetch(options?: UserResolvable | FetchUserOptions | FetchUsersOptions) {
+    fetch(): Promise<this>;
+    public async fetch(options?: UserResolvable | FetchUserOptions) {
         let url: string;
 
         if (!options)

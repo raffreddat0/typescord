@@ -1,6 +1,5 @@
 import { APIUser, Snowflake, UserPremiumType, UserFlags } from "discord-api-types/v10";
 import isEqual from "lodash/isEqual";
-import type { AvatarDecoration } from "types/user";
 import { Base, Client, Flags } from "@src/main";
 import { getTimestamp } from "@utils/string";
 
@@ -20,7 +19,10 @@ export default class User extends Base {
     public email?: string | null;
     public flags?: Flags<typeof UserFlags>;
     public premiumType?: UserPremiumType;
-    public avatarDecoration?: AvatarDecoration | null;
+    public avatarDecoration?: {
+        asset: string;
+        skuId: string;
+    } | null;
 
     constructor(client: Client, data?: APIUser) {
         super(client);
@@ -42,7 +44,7 @@ export default class User extends Base {
         this.flags = new Flags(data.flags ?? 0, UserFlags);
         this.premiumType = data.premium_type ?? null;
         this.avatarDecoration = data.avatar_decoration_data ? {
-            asset: data.avatar_decoration_data.asset ,
+            asset: data.avatar_decoration_data.asset,
             skuId: data.avatar_decoration_data.sku_id,
         } : null;
     }

@@ -1,5 +1,5 @@
 import type { APIGuild, GuildFeature, Snowflake } from "discord-api-types/v10";
-import { Base, Client, Member, Members } from "@src/main";
+import { Base, Client, Member, Members, Roles } from "@src/main";
 
 export default class Guild extends Base {
     public id: Snowflake;
@@ -12,6 +12,7 @@ export default class Guild extends Base {
     public ownerId: Snowflake;
     public owner: Member;
     public members: Members;
+    public roles: Roles;
 
     constructor(client: Client, data?: APIGuild) {
         super(client);
@@ -27,14 +28,17 @@ export default class Guild extends Base {
         this.ownerId = data.owner_id;
         this.owner = new Member(this.client, this, { id: this.ownerId });
         this.members = new Members(this.client, this);
+        this.roles = new Roles(this.client, this);
     }
 
     public async fetch() {
         const updated = await this.client.guilds.fetch({ guild: this.id, caching: false });
         await updated.members.fetch();
+        await updated.roles.fetch();
         await updated.owner.fetch();
 
         Object.assign(this, updated);
+        return this;
     }
 
     public toJSON() {

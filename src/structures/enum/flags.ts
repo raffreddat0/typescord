@@ -1,5 +1,5 @@
 import type { UserFlags, ChannelFlags, GuildMemberFlags, RoleFlags } from "discord-api-types/v10";
-import type { EnumResolvable } from "types/enum";
+import type { EnumResolvable } from "types/resolvable";
 import { Enum } from "@src/main";
 
 type EnumType = typeof UserFlags | typeof ChannelFlags | typeof GuildMemberFlags | typeof RoleFlags;

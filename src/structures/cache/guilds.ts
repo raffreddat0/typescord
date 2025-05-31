@@ -1,9 +1,8 @@
 import type { APIGuild } from "discord-api-types/v10";
-import type { GuildResolvable } from "types/guild";
-import type { FetchGuildOptions, FetchGuildsOptions } from "types/guilds";
+import type { GuildResolvable } from "types/resolvable";
+import type { FetchGuildOptions, FetchGuildsOptions } from "types/fetch";
 import { Routes } from "discord-api-types/v10";
-import { Client, Guild } from "@src/main";
-import Cache from "./main";
+import { Cache, Client, Guild } from "@src/main";
 
 export default class Guilds extends Cache<Guild> {
 
@@ -33,13 +32,17 @@ export default class Guilds extends Cache<Guild> {
                     if ("caching" in options && options.caching === false)
                         caching = false;
                 } else if ("before" in options || "after" in options || "limit" in options) {
-                    url = Routes.userGuilds();
+                    const params = [];
                     if ("before" in options)
-                        url += `?before=${options.before}`;
+                        params.push(`before=${options.before}`);
                     if ("after" in options)
-                        url += `?after=${options.after}`;
+                        params.push(`after=${options.after}`);
                     if ("limit" in options)
-                        url += `?limit=${options.limit}`;
+                        params.push(`limit=${options.limit}`);
+
+                    url = Routes.userGuilds();
+                    if (params.length > 0)
+                        url += `?${params.join("&")}`;
                 }
         }
 

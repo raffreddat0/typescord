@@ -17,6 +17,8 @@ import Select from "@structures/message/component/select/base";
 import StringSelect from "@structures/message/component/select/string";
 import Member from "@structures/member";
 import Members from "@structures/cache/members";
+import Role from "@structures/role";
+import Roles from "@structures/cache/roles";
 import BaseChannel from "@structures/channel/base";
 import DMChannel from "@structures/channel/dm";
 import Channels from "@structures/cache/channels";
@@ -41,6 +43,8 @@ export {
     StringSelect,
     Member,
     Members,
+    Role,
+    Roles,
     BaseChannel,
     DMChannel,
     Channels,

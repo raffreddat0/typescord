@@ -84,6 +84,8 @@ export default class Member extends Base {
     public async fetch() {
         const updated = await this.guild.members.fetch({ member: this.id, caching: false });
         Object.assign(this, updated);
+
+        return this;
     }
 
     public toJSON(): Omit<APIGuildMember, "roles"> {
