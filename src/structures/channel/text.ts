@@ -53,12 +53,12 @@ export default class TextChannel extends Base {
         return this.client.rest.url(`/channels/${this.guildId}/${this.id}`);
     }
 
-    get deletable(): Boolean {
+    get deletable(): boolean {
         //Whether the channel is deletable by the client user
         return;
     }
 
-    get guild(): Guild{
+    get guild(): Guild {
         return this.client.guilds.get(this.guildId);
     }
 
@@ -66,17 +66,17 @@ export default class TextChannel extends Base {
         return; // lastMessageId fetcharlo
     }
 
-    get lastPinAt(): Date{
+    get lastPinAt(): Date {
         return new Date(this.lastPinTimestamp);
     }
 
-    get manageable(): Boolean {
+    get manageable(): boolean {
         //Whether the channel is manageable by the client user
         return;
     }
 
-    get members(){
-        return //A collection of cached members of this channel, mapped by their ids. Members that can view this channel, if the channel is text-based. Members in the channel, if the channel is voice-based.
+    get members() {
+        return; //A collection of cached members of this channel, mapped by their ids. Members that can view this channel, if the channel is text-based. Members in the channel, if the channel is voice-based.
     }
 
     get messages() {
@@ -88,7 +88,7 @@ export default class TextChannel extends Base {
         //CategoryChannel
     }
 
-    get viewable(): Boolean {
+    get viewable(): boolean {
         //Whether the channel is viewable by the client user
         return;
     }
