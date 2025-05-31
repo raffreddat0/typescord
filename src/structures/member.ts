@@ -1,8 +1,8 @@
-import { APIGuildMember, GuildMemberFlags } from "discord-api-types/v10";
-import { Base, Client, User, Guild, Flags } from "@src/main";
+import { APIGuildMember, GuildMemberFlags, PermissionFlagsBits, Snowflake } from "discord-api-types/v10";
+import { Base, Client, User, Guild, Flags, Permissions } from "@src/main";
 
 export default class Member extends Base {
-    public id: string;
+    public id: Snowflake;
     public user: User;
     public nickname?: string | null;
     public avatar?: string | null;
@@ -11,26 +11,32 @@ export default class Member extends Base {
     public deaf: boolean;
     public mute: boolean;
     public flags: Flags<typeof GuildMemberFlags>;
+    public permissions: Permissions<typeof PermissionFlagsBits>;
     public pending?: boolean;
-    public guildId: string;
+    public guildId: Snowflake;
     public guild: Guild;
 
-    constructor(client: Client, guild: Guild, data?: APIGuildMember) {
+    constructor(client: Client, guild: Guild, data?: Partial<APIGuildMember & { id: string }>) {
         super(client);
 
         if (!data) return;
-        this.id = data.user.id;
-        this.user = new User(this.client, data.user);
-        this.nickname = data.nick ?? null;
-        this.avatar = data.avatar ?? null;
-        this.banner = data.banner ?? null;
-        this.joinedTimestamp = new Date(data.joined_at).getTime();
-        this.deaf = data.deaf;
-        this.mute = data.mute;
-        this.flags = new Flags(data.flags, GuildMemberFlags);
-        this.pending = data.pending;
-        this.guildId = guild.id;
-        this.guild = guild;
+        if (data?.id)
+            this.id = data?.id;
+        else {
+            this.id = data?.user?.id;
+            this.user = new User(this.client, data.user);
+            this.nickname = data.nick ?? null;
+            this.avatar = data.avatar ?? null;
+            this.banner = data.banner ?? null;
+            this.joinedTimestamp = new Date(data.joined_at).getTime();
+            this.deaf = data.deaf;
+            this.mute = data.mute;
+            this.flags = new Flags(data.flags, GuildMemberFlags);
+            this.permissions = new Permissions(undefined, PermissionFlagsBits);
+            this.pending = data.pending;
+            this.guildId = guild.id;
+            this.guild = guild;
+        }
     }
 
     get joinedAt() {
@@ -73,6 +79,11 @@ export default class Member extends Base {
         extension?: string
     } = {}) {
         return this.bannerURL(options) ?? this.user.bannerURL(options);
+    }
+
+    public async fetch() {
+        const updated = await this.guild.members.fetch({ member: this.id, caching: false });
+        Object.assign(this, updated);
     }
 
     public toJSON(): Omit<APIGuildMember, "roles"> {

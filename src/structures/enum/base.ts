@@ -1,7 +1,7 @@
 import type { EnumResolvable } from "types/enum";
 import { inspect } from "util";
 
-export default class Enum<T extends Record<string, string | number>> {
+export default class Enum<T extends Record<string, string | number | bigint>> {
     public readonly enumerator: T;
     private bit: bigint;
     private freezed: boolean;

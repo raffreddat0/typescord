@@ -1,7 +1,8 @@
 import Base from "@structures/base";
-import Enum from "@structures/enum/main";
+import Enum from "@structures/enum/base";
 import Intents from "@structures/enum/intents";
 import Flags from "@structures/enum/flags";
+import Permissions from "@structures/enum/permissions";
 import Cache from "@structures/cache/main";
 import Client from "@structures/client/main";
 import User from "@structures/user";
@@ -25,6 +26,7 @@ export {
     Enum,
     Flags,
     Intents,
+    Permissions,
     Cache,
     Client,
     User,

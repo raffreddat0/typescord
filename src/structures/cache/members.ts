@@ -18,7 +18,7 @@ export default class Members extends Cache<Member> {
     fetch(options: FetchMemberOptions): Promise<Member>;
     fetch(options?: FetchMembersOptions): Promise<this>;
     public async fetch(options?: MemberResolvable | FetchMemberOptions | FetchMembersOptions) {
-        let url: string;
+        let url: string, caching = true;
 
         if (!options)
             url = Routes.guildMembers(this.guild.id);
@@ -29,9 +29,11 @@ export default class Members extends Cache<Member> {
                     return this.get(resolve);
                 url = Routes.guildMember(this.guild.id, resolve);
             } else if (typeof options === "object")
-                if ("member" in options)
+                if ("member" in options) {
                     url = Routes.guildMember(this.guild.id, this.resolveId(options.member));
-                else if ("after" in options || "limit" in options) {
+                    if ("caching" in options && options.caching === false)
+                        caching = false;
+                } else if ("after" in options || "limit" in options) {
                     url = Routes.guildMembers(this.guild.id);
                     if ("after" in options)
                         url += `?after=${options.after}`;

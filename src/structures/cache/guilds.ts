@@ -15,7 +15,7 @@ export default class Guilds extends Cache<Guild> {
     fetch(options: FetchGuildOptions): Promise<Guild>;
     fetch(options?: FetchGuildsOptions): Promise<this>;
     public async fetch(options?: GuildResolvable | FetchGuildOptions | FetchGuildsOptions) {
-        let url: string;
+        let url: string, caching = true;
 
         if (!options)
             url = Routes.userGuilds();
@@ -30,6 +30,8 @@ export default class Guilds extends Cache<Guild> {
                     url = Routes.guild(this.resolveId(options.guild));
                     if ("withCounts" in options)
                         url += `?with_counts=${options.withCounts}`;
+                    if ("caching" in options && options.caching === false)
+                        caching = false;
                 } else if ("before" in options || "after" in options || "limit" in options) {
                     url = Routes.userGuilds();
                     if ("before" in options)
@@ -52,8 +54,15 @@ export default class Guilds extends Cache<Guild> {
         }
 
         const guild = new Guild(this.client, data);
-        await guild.members.fetch();
         this.set(guild.id, guild);
+
+        if (caching) {
+            if (this.client.options.cache.members)
+                await guild.members.fetch();
+            await guild.owner.fetch();
+        }
+
+        this.set(guild.id, guild); // TODO: Verificare se effettivamente serve o no
 
         return guild;
     }
@@ -82,9 +91,9 @@ export default class Guilds extends Cache<Guild> {
 
         else if (!(data instanceof Guild)) {
             const fixed = new Guild(this.client, data);
-            if (this.client.options.cache.members)
-                await fixed.members.fetch();
             this.set(data.id, fixed);
+            await fixed.fetch();
+            this.set(data.id, fixed); // TODO: Verificare se effettivamente serve o no
         } else
             this.set(data.id, data);
     }

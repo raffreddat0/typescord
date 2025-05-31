@@ -2,7 +2,7 @@ import { APIChannelBase, ChannelFlags, ChannelType } from "discord-api-types/v10
 import { Client, Flags, Base } from "@src/main";
 import { getTimestamp } from "@utils/string";
 
-export default class BaseChannel<T extends ChannelType> extends Base {
+export default class BaseChannel<T extends ChannelType = ChannelType> extends Base {
     public id: string;
     public type: number;
     public flags?: Flags;

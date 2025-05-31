@@ -3,7 +3,7 @@ import type { MemberResolvable } from "./member";
 
 export interface FetchMemberOptions {
     member: MemberResolvable;
-    withCounts?: boolean;
+    caching?: boolean;
 }
 
 export interface FetchMembersOptions {

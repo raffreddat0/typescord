@@ -1,15 +1,16 @@
-import type { APIGuild } from "discord-api-types/v10";
-import { Client, Members } from "@src/main";
-import Base from "@structures/base";
+import type { APIGuild, GuildFeature, Snowflake } from "discord-api-types/v10";
+import { Base, Client, Member, Members } from "@src/main";
 
 export default class Guild extends Base {
-    public id: string;
+    public id: Snowflake;
     public name: string;
     public icon: string | null;
     public splash: string | null;
     public discoverySplash: string | null;
     public features: string[];
     public mfaLevel: number;
+    public ownerId: Snowflake;
+    public owner: Member;
     public members: Members;
 
     constructor(client: Client, data?: APIGuild) {
@@ -23,7 +24,17 @@ export default class Guild extends Base {
         this.discoverySplash = data.discovery_splash;
         this.features = data.features;
         this.mfaLevel = data.mfa_level;
+        this.ownerId = data.owner_id;
+        this.owner = new Member(this.client, this, { id: this.ownerId });
         this.members = new Members(this.client, this);
+    }
+
+    public async fetch() {
+        const updated = await this.client.guilds.fetch({ guild: this.id, caching: false });
+        await updated.members.fetch();
+        await updated.owner.fetch();
+
+        Object.assign(this, updated);
     }
 
     public toJSON() {
@@ -32,10 +43,10 @@ export default class Guild extends Base {
             name: this.name,
             icon: this.icon,
             splash: this.splash,
-            discoverySplash: this.discoverySplash,
-            features: this.features,
-            mfaLevel: this.mfaLevel,
-            members: this.members.toArray()
+            discovery_splash: this.discoverySplash,
+            features: this.features as GuildFeature[],
+            mfa_level: this.mfaLevel,
+
         };
     }
 }
