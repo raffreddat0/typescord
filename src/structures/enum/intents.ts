@@ -1,5 +1,5 @@
 import { GatewayIntentBits } from "discord-api-types/v10";
-import type { EnumResolvable } from "types/resolvable";
+import type { EnumResolvable } from "types/main";
 import { Enum } from "@src/main";
 
 type EnumType = typeof GatewayIntentBits;

@@ -1,5 +1,5 @@
 import axios, { AxiosInstance, Axios } from "axios";
-import type { RestOptions } from "types/rest";
+import type { RestOptions } from "types/main";
 
 export default class Rest {
     private readonly path: string;

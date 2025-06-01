@@ -1,5 +1,5 @@
 import { GatewayIntentBits } from "discord-api-types/v10";
-import type { ClientOptions } from "types/client";
+import type { ClientOptions } from "types/main";
 import { EventEmitter } from "events";
 import { Users, Guilds, User, Channels, DMChannel, Intents } from "@src/main";
 import WebSocket from "./ws";

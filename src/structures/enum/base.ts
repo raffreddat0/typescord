@@ -1,4 +1,4 @@
-import type { EnumResolvable } from "types/resolvable";
+import type { EnumResolvable } from "types/main";
 import { inspect } from "util";
 
 export default class Enum<T extends Record<string, string | number | bigint>> {

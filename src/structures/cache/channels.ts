@@ -1,6 +1,5 @@
-import type { APIChannel } from "discord-api-types/v10";
-import type { ChannelResolvable } from "types/resolvable";
-import { Routes } from "discord-api-types/v10";
+import { APIChannel, Routes } from "discord-api-types/v10";
+import type { ChannelResolvable } from "types/main";
 import { Cache, Client, BaseChannel } from "@src/main";
 
 export default class Channels<T extends BaseChannel<any>> extends Cache<T> {

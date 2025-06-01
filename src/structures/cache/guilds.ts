@@ -1,7 +1,5 @@
-import type { APIGuild } from "discord-api-types/v10";
-import type { GuildResolvable } from "types/resolvable";
-import type { FetchGuildOptions, FetchGuildsOptions } from "types/fetch";
-import { Routes } from "discord-api-types/v10";
+import { APIGuild, Routes } from "discord-api-types/v10";
+import type { GuildResolvable, FetchGuildOptions, FetchGuildsOptions } from "types/main";
 import { Cache, Client, Guild } from "@src/main";
 
 export default class Guilds extends Cache<Guild> {

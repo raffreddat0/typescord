@@ -1,7 +1,5 @@
-import type { APIGuildMember, Snowflake } from "discord-api-types/v10";
-import type { MemberResolvable } from "types/resolvable";
-import type { FetchMemberOptions, FetchMembersOptions } from "types/fetch";
-import { Routes } from "discord-api-types/v10";
+import { APIGuildMember, Routes, Snowflake } from "discord-api-types/v10";
+import type { MemberResolvable, FetchMemberOptions, FetchMembersOptions } from "types/main";
 import { Cache, Client, Member, Guild } from "@src/main";
 
 export default class Members extends Cache<Member> {

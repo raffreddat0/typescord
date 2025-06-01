@@ -1,5 +1,5 @@
 import type { GatewayIntentBits } from "discord-api-types/v10";
-import type { EnumResolvable } from "types/resolvable";
+import type { EnumResolvable } from "types/main";
 import { Intents } from "@src/main";
 
 export interface CacheOptions {
@@ -17,3 +17,9 @@ export interface ClientOptions {
     token?: string;
     cache?: CacheOptions;
 };
+
+export interface RestOptions {
+    token: string;
+    path?: string;
+    cdn?: string;
+}

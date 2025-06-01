@@ -1,7 +1,5 @@
-import type { APIRole } from "discord-api-types/v10";
-import type { RoleResolvable } from "types/resolvable";
-import type { FetchRoleOptions } from "types/fetch";
-import { Routes } from "discord-api-types/v10";
+import { APIRole, Routes } from "discord-api-types/v10";
+import type { RoleResolvable, FetchRoleOptions } from "types/main";
 import { Cache, Client, Role, Guild } from "@src/main";
 
 export default class Roles extends Cache<Role> {

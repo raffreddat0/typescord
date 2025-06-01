@@ -1,51 +1,24 @@
-import Base from "@structures/base";
-import Enum from "@structures/enum/base";
-import Intents from "@structures/enum/intents";
-import Flags from "@structures/enum/flags";
-import Permissions from "@structures/enum/permissions";
-import Cache from "@structures/cache/main";
-import Client from "@structures/client/main";
-import User from "@structures/user";
-import Users from "@structures/cache/users";
-import Guild from "@structures/guild";
-import Guilds from "@structures/cache/guilds";
-import Message from "@structures/message/main";
-import BaseComponent from "@structures/message/component/base";
-import Button from "@structures/message/component/button";
-import Media from "@structures/message/component/media";
-import Select from "@structures/message/component/select/base";
-import StringSelect from "@structures/message/component/select/string";
-import Member from "@structures/member";
-import Members from "@structures/cache/members";
-import Role from "@structures/role";
-import Roles from "@structures/cache/roles";
-import BaseChannel from "@structures/channel/base";
-import DMChannel from "@structures/channel/dm";
-import Channels from "@structures/cache/channels";
-
-export {
-    Base,
-    Enum,
-    Flags,
-    Intents,
-    Permissions,
-    Cache,
-    Client,
-    User,
-    Users,
-    Guild,
-    Guilds,
-    Message,
-    BaseComponent,
-    Button,
-    Media,
-    Select,
-    StringSelect,
-    Member,
-    Members,
-    Role,
-    Roles,
-    BaseChannel,
-    DMChannel,
-    Channels,
-};
+export { default as Base } from "@structures/base";
+export { default as Enum } from "@structures/enum/base";
+export { default as Intents } from "@structures/enum/intents";
+export { default as Flags } from "@structures/enum/flags";
+export { default as Permissions } from "@structures/enum/permissions";
+export { default as Cache } from "@structures/cache/main";
+export { default as Client } from "@structures/client/main";
+export { default as User } from "@structures/user";
+export { default as Users } from "@structures/cache/users";
+export { default as Guild } from "@structures/guild";
+export { default as Guilds } from "@structures/cache/guilds";
+export { default as Message } from "@structures/message/base";
+export { default as BaseComponent } from "@structures/message/component/base";
+export { default as Button } from "@structures/message/component/button";
+export { default as Media } from "@structures/message/component/media";
+export { default as Select } from "@structures/message/component/select/base";
+export { default as StringSelect } from "@structures/message/component/select/string";
+export { default as Member } from "@structures/member";
+export { default as Members } from "@structures/cache/members";
+export { default as Role } from "@structures/role";
+export { default as Roles } from "@structures/cache/roles";
+export { default as BaseChannel } from "@structures/channel/base";
+export { default as DMChannel } from "@structures/channel/dm";
+export { default as Channels } from "@structures/cache/channels";
