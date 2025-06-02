@@ -1,5 +1,5 @@
 import { APIGuildMember, GuildMemberFlags, PermissionFlagsBits, Snowflake } from "discord-api-types/v10";
-import { Base, Client, User, Guild, Flags, Permissions } from "@src/main";
+import { Base, Client, User, Guild, Roles, Flags, Permissions } from "@src/main";
 
 export default class Member extends Base {
     public id: Snowflake;
@@ -7,6 +7,7 @@ export default class Member extends Base {
     public nickname?: string | null;
     public avatar?: string | null;
     public banner?: string | null;
+    public roles: Roles;
     public joinedTimestamp: number;
     public deaf: boolean;
     public mute: boolean;
@@ -28,6 +29,7 @@ export default class Member extends Base {
             this.nickname = data.nick ?? null;
             this.avatar = data.avatar ?? null;
             this.banner = data.banner ?? null;
+            this.roles = new Roles(this.client, guild);
             this.joinedTimestamp = new Date(data.joined_at).getTime();
             this.deaf = data.deaf;
             this.mute = data.mute;
@@ -36,6 +38,9 @@ export default class Member extends Base {
             this.pending = data.pending;
             this.guildId = guild.id;
             this.guild = guild;
+
+            const roles = guild.roles.filter(role => data.roles.includes(role.id));
+            this.roles.fix(roles);
         }
     }
 

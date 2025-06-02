@@ -1,4 +1,5 @@
 import Client from "@structures/client/main";
+import { includes } from "lodash";
 
 export default class Cache<V> extends Map<string, V> {
     public readonly client: Client;
@@ -66,6 +67,10 @@ export default class Cache<V> extends Map<string, V> {
             if (callback(value, key)) return value;
 
         return null;
+    }
+
+    public includes(target: V, fromIndex?: number) {
+        return includes(this.toArray(), target, fromIndex);
     }
 
     public toArray() {

@@ -1,5 +1,5 @@
 import { APIRole, Snowflake, RoleFlags, PermissionFlagsBits, APIRoleTags } from "discord-api-types/v10";
-import { Base, Client, Guild, Permissions, Flags } from "@src/main";
+import { Base, Client, Guild, Permissions, Flags, Members } from "@src/main";
 
 export default class Role extends Base {
     public id: Snowflake;
@@ -21,6 +21,7 @@ export default class Role extends Base {
         guildConnections?: boolean;
     };
     public flags?: Flags<typeof RoleFlags>;
+    public members: Members;
     public guildId: Snowflake;
     public guild: Guild;
 
@@ -47,8 +48,12 @@ export default class Role extends Base {
             guildConnections: data.tags?.guild_connections ?? false,
         };
         this.flags = new Flags(data.flags, RoleFlags);
+        this.members = new Members(client, guild);
         this.guildId = guild.id;
         this.guild = guild;
+
+        const members = this.guild.members.filter(member => member.roles.has(this.id));
+        this.members.fix(members);
     }
 
     public async fetch() {
