@@ -3,15 +3,11 @@
 **Typescord** is a simple and **type-friendly** library designed to make interacting with the Discord API easy.  
 Its goal is to provide a clear, typed interface to quickly and safely build bots and integrations.
 
----
-
 ## 🚀 Key Features
 
 - Full typing for main Discord objects (channels, messages, users, etc.)
 - Basic functions to handle Discord REST API requests
 - Modular and easily extensible architecture
-
----
 
 ## 📖 How to Contribute
 
