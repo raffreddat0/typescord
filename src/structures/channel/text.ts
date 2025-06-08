@@ -1,5 +1,5 @@
 import { APITextChannel, ChannelFlags } from "discord-api-types/v10";
-import { Client, Flags, Base, Guild, Message } from "@src/main";
+import { Client, Flags, Base, Guild } from "@src/main";
 import { getTimestamp } from "@utils/string";
 import { patchMessage } from "@utils/functions";
 
@@ -17,13 +17,12 @@ export default class TextChannel extends Base {
     public defaultAutoArchiveDuration?: number;
     public defaultThreadRateLimitPerUser?: number;
     public parentId?: string;
-    //public permissionOverwrites?: APIOverwrite[];
     public flags?: Flags;
 
     constructor(client: Client, data?: APITextChannel) {
         super(client);
-
         if (!data) return;
+
         this.id = data.id;
         this.type = data.type;
         this.name = data.name;
@@ -37,8 +36,7 @@ export default class TextChannel extends Base {
         this.defaultAutoArchiveDuration = data.default_auto_archive_duration;
         this.defaultThreadRateLimitPerUser = data.default_thread_rate_limit_per_user;
         this.parentId = data.parent_id;
-        //this.permissionOverwrites = data.permission_overwrites;
-        this.flags = new Flags(data.flags, ChannelFlags);
+        this.flags = new Flags(data.flags ?? 0, ChannelFlags);
     }
 
     get createdTimestamp() {
@@ -50,47 +48,45 @@ export default class TextChannel extends Base {
     }
 
     get url() {
-        return this.client.rest.url(`/channels/${this.guildId}/${this.id}`);
+        return this.client.rest.url(`/channels/${this.id}`);
     }
 
-    get deletable(): boolean {
-        //Whether the channel is deletable by the client user
-        return;
+    get deletable() {
+        return this.guild?.me?.can("MANAGE_CHANNELS") ?? false;
     }
 
-    get guild(): Guild {
-        return this.client.guilds.get(this.guildId);
+    get manageable() {
+        return this.guild?.me?.can("MANAGE_CHANNELS") ?? false;
+    }
+
+    get viewable() {
+        return this.guild?.me?.can("VIEW_CHANNEL") ?? false;
+    }
+
+    get guild(): Guild | undefined {
+        return this.client.guilds.get(this.guildId!);
     }
 
     get lastMessage() {
-        return; // lastMessageId fetcharlo
+        return this.client.messages.get(this.lastMessageId!);
     }
 
-    get lastPinAt(): Date {
-        return new Date(this.lastPinTimestamp);
-    }
-
-    get manageable(): boolean {
-        //Whether the channel is manageable by the client user
-        return;
+    get lastPinAt() {
+        return this.lastPinTimestamp ? new Date(this.lastPinTimestamp) : undefined;
     }
 
     get members() {
-        return; //A collection of cached members of this channel, mapped by their ids. Members that can view this channel, if the channel is text-based. Members in the channel, if the channel is voice-based.
+        return this.guild?.members.filter(member =>
+            member.permissionsIn(this).has("VIEW_CHANNEL")
+        );
     }
 
     get messages() {
-        return; //A manager of the messages sent to this channel
+        return this.client.messages.cache.filter(msg => msg.channelId === this.id);
     }
 
     get parent() {
-        return; //The category parent of this channel
-        //CategoryChannel
-    }
-
-    get viewable(): boolean {
-        //Whether the channel is viewable by the client user
-        return;
+        return this.guild?.channels.get(this.parentId!);
     }
 
     public async send(...options: (string | any)[]) {
@@ -99,11 +95,11 @@ export default class TextChannel extends Base {
         });
     }
 
-    public toString() {
-        return `<#${this.id}}>`;
+    toString() {
+        return `<#${this.id}>`;
     }
 
-    public toJSON() {
+    toJSON() {
         return {
             id: this.id,
             type: this.type,
@@ -118,8 +114,7 @@ export default class TextChannel extends Base {
             default_auto_archive_duration: this.defaultAutoArchiveDuration,
             default_thread_rate_limit_per_user: this.defaultThreadRateLimitPerUser,
             parent_id: this.parentId,
-            //permission_overwrites: this.permissionOverwrites,
-            flags: Number(this.flags.bitfield)
+            flags: Number(this.flags?.bitfield ?? 0)
         };
     }
 }
