@@ -1,6 +1,6 @@
 import type { APIMessage } from "discord-api-types/v10";
 import { Client, User } from "@src/main";
-import Base from "@structures/base";
+import Base from "@structures/Base";
 
 export default class Message extends Base {
     public id: string;

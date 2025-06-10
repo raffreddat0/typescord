@@ -1,4 +1,4 @@
-import Client from "@structures/client/main";
+import Client from "@structures/client/Client";
 import { includes } from "lodash";
 
 export default class Cache<V> extends Map<string, V> {

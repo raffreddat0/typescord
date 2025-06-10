@@ -1,5 +1,5 @@
 import { inspect } from "util";
-import Client from "@structures/client/main";
+import Client from "@structures/client/Client";
 
 export default class Base {
     protected readonly client: Client;

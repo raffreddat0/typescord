@@ -1,5 +1,5 @@
 import { APIGuild } from "discord-api-types/v10";
-import Client from "@structures/client/main";
+import Client from "@structures/client/Client";
 import Guild from "@structures/guild";
 
 export default function guildCreate(client: Client, data: APIGuild) {
